@@ -1,5 +1,6 @@
 import typing
 import discord
+from replit import db
 
 class Colour:
   def __init__(
@@ -25,6 +26,19 @@ class Guild:
     self
   ) -> typing.List[discord.Member]:
     return self.members
+  
+  def get_total_points(
+    self
+  ) -> int:
+    total = 0
+    for member in self.members:
+      if str(member.id) in db["users"]:
+        total+=db["users"][str(member.id)]
+      else:
+        total+=500
+    
+    return total
+   
   
   def not_yet_guild(
     func
