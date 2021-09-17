@@ -138,6 +138,17 @@ class DebateRoom:
   ) -> None:
     self.props.append(prop)
     
+  def get_user_by_id(
+    self,
+    member: discord.Member
+  ) -> typing.Union(User, None):
+    for particpant in self.participants:
+      if participant.member.id == member.id:
+        return participant
+      else:
+        continue
+    return
+    
   def add_participant(
     self,
     user: User
