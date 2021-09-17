@@ -110,8 +110,8 @@ class Debates(commands.Cog):
         "name": "member",
         "description": "The member whose proposition you would like to vote for.",
         "option_type": 7,
-        "choices": self.choices
-        "required": False
+        "choices": self.choices,
+        "required": False,
         "default": "null"
       }
     ]
@@ -228,7 +228,7 @@ class Debates(commands.Cog):
         "name": "member",
         "description": "The member you would like to vote for.",
         "option_type": 7,
-        "choices" = self.get_debater_choices
+        "choices" = self.get_debater_choices,
         "required": True
       }
     ]
