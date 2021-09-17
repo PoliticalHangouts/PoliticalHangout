@@ -83,7 +83,7 @@ def get_guild(
   for value in values:
     current_guild= value
     for value_next in values.remove(value):
-      if value[1].get_total_elo()/len(value[1].members) / value_next[1].get_total_elo()/len(value_next[1].members) > 1.5:
+      if value[1].get_total_points()/len(value[1].members) / value_next[1].get_total_points()/len(value_next[1].members) > 1.5:
         next_guild = True
       else:
         continue
