@@ -79,7 +79,8 @@ def get_guild(
   #b, c, d - other guilds
   current_guild = 0
   
-  for value in sort(values):
+  values = sort(values)
+  for value in values:
     current_guild= value
     for value_next in values.remove(value):
       if value[1].get_total_elo()/len(value[1].members) / value_next[1].get_total_elo()/len(value_next[1].members) > 1.5:
