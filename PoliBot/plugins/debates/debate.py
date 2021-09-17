@@ -70,6 +70,29 @@ class Debates(commands.Cog):
         return
     return wrapper
     
+  @commands.Cog.listener()
+  async def on_voice_state_update(
+    self,
+    member: discord.Member,
+    before,
+    after
+  ) -> None:
+    if after.channel.id == 806018840176885791 and not member.bot:
+      if not self.debate_room:
+        self.debate_room = DebateRoom(
+          [ctx.author]
+        )
+      self.debate_room.add_participant(
+        User(
+          member.display_name,
+          member
+        )
+      )
+    if not after.channel:
+      self.debate_room.participants.remove(self.debate_room.get_user_by_id(member.id))
+    pass
+      
+    
   @only_debate_rooms
   @not_yet_voted
   @cog_ext.cog_slash(
