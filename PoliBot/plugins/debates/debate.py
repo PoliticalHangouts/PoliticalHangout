@@ -90,6 +90,7 @@ class Debates(commands.Cog):
       )
     if not after.channel:
       self.debate_room.participants.remove(self.debate_room.get_user_by_id(member.id))
+      self.debate_room.debaters.remove(self.debate_room.get_user_by_id(member.id))
     pass
       
     
