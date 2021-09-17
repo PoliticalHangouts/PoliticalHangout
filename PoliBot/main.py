@@ -32,7 +32,7 @@ def main() -> None:
     'plugins.core.error.error_handling',
     'plugins.core.startup.login',
     'plugins.guilds.quiz',
-    'plugins.guilds.guild_permissions',
+    #'plugins.guilds.guilds',
     'plugins.debates.debate',
   ]
   for cog in cogs:
