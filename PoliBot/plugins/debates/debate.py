@@ -144,4 +144,27 @@ class Debates(commands.Cog):
         
         return
    
+  @only_debate_rooms
+  @cog_ext.cog_slash(
+    name="For",
+    description="Sets you as for the proposition: {}".format(self.debate_room.proposition)
+  )
+  async def _for(
+    self,
+    ctx: SlashContext
+  ) -> discord.Message:
+    self.debate_room.get_user_by_id(ctx.author.id).stance = "for"
+    return await ctx.send("Stance set to **for**")
+  
+  @only_debate_rooms
+  @cog_ext.cog_slash(
+    name="Against",
+    descrption="Sets your as against the proposition: {}".format(self.debate_room.proposition)
+  )
+  async def _against(
+    self,
+    ctx: SlashContext
+  ) -> discord.Message:
+    self.debate_room.get_user_by_id(ctx.author.id).stance = "against"
+    return await ctx.send("Stance set to **against**")
       
