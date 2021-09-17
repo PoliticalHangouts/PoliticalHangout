@@ -5,6 +5,65 @@ from replit import db
 
 from plugins.debate import calculation
 
+
+class Proposition:
+  def __init__(
+    self,
+    prop: str,
+    author: discord.Member,
+    message: discord.Message
+  ) -> None:
+    self.prop=prop
+
+    self.author=author
+    
+    self.votes: typing.List[discord.Member] = [author]
+    
+    self.created_at = message.created_at
+    self.priority = False
+
+    
+def is_sorted(
+  values: typing.List[Proposition]
+) -> bool:
+  for i in range(0, len(values)):
+    if i == len(values):
+      break
+    
+    if values[i].votes > values[i+1].votes:
+      continue
+      
+    else:
+      return False
+    
+  return True
+
+def sort(
+  values: typing.List[Proposition]
+) -> typing.List[Proposition]:
+  previous_value = 0
+  n = 0
+  while True:
+    for i in range(0, len(values)):
+      if previous_value == 0:
+        previous_value = values[i]
+        n = i
+        continue
+      else:
+        if values[i].votes > previous_value.votes:
+          values[i], values[n] = values[n], values[i]
+          n = i
+          continue
+        else:
+          continue
+    
+    if is_sorted(values):
+      break
+    else:
+      continue
+  
+  return values
+
 class User:
   def __init__(
     self,
@@ -33,30 +92,13 @@ class User:
   ) -> None:
     self.stance=stance
 
-class Proposition:
-  def __init__(
-    self,
-    prop: str,
-    author: discord.Member,
-    message: discord.Message
-  ) -> None:
-    self.prop=prop
-
-    self.author=author
-    
-    self.votes: typing.List[discord.Member] = [author]
-    
-    self.created_at = message.created_at
-    self.priority = False
-
 class DebateRoom:
   def __init__(
     self,
     users: typing.List[discord.Member]=[],
-    prop: Proposition=None
   ) -> None:
-    self.users=users
-    self.prop=prop
+    self.users = users
+    self.props = []
     
     self.participants: typing.List[User] = []
     self.debaters: typing.List[User] = []
@@ -83,7 +125,25 @@ class DebateRoom:
         against.append(participant)
       else:
         continue
-        
+     
+  @property
+  def proposition(
+    self
+  ) -> Proposition:
+    
+    
+  def add_proposition(
+    self,
+    prop: Proposition
+  ) -> None:
+    self.props.append(prop)
+    
+  def add_participant(
+    self,
+    user: User
+  ) -> None:
+    self.participants.append(user)
+    
   def add_debater(
     self,
     user: User
