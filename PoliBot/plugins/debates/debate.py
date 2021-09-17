@@ -31,6 +31,22 @@ class Debates(commands.Cog):
     
     self.voters = []
     
+    self.concluders = []
+    
+    
+  @property
+  def get_debater_choices(
+    self
+  ) -> typing.Any:
+    choices = []
+    for debater in self.debate_room.debaters:
+      choices.append(
+        {
+          name=debater.name,
+          value=debater.member
+        }
+      )
+    return choices
     
   def only_debate_rooms(
     func
@@ -81,7 +97,7 @@ class Debates(commands.Cog):
     self,
     ctx: SlashContext,
     proposition: str,
-    member: str
+    member: discord.Member
   ) -> typing.Union(discord.Message, None):
     if proposition == "null" and member == "null":
       raise MustHaveOneArgumentError()
@@ -146,7 +162,7 @@ class Debates(commands.Cog):
    
   @only_debate_rooms
   @cog_ext.cog_slash(
-    name="For",
+    name="for",
     description="Sets you as for the proposition: {}".format(self.debate_room.proposition)
   )
   async def _for(
@@ -154,17 +170,72 @@ class Debates(commands.Cog):
     ctx: SlashContext
   ) -> discord.Message:
     self.debate_room.get_user_by_id(ctx.author.id).stance = "for"
-    return await ctx.send("Stance set to **for**")
+    return await ctx.channel.send("Stance set to **for**")
   
   @only_debate_rooms
   @cog_ext.cog_slash(
-    name="Against",
-    descrption="Sets your as against the proposition: {}".format(self.debate_room.proposition)
+    name="against",
+    descrption="Sets you as against the proposition: {}".format(self.debate_room.proposition)
   )
   async def _against(
     self,
     ctx: SlashContext
   ) -> discord.Message:
     self.debate_room.get_user_by_id(ctx.author.id).stance = "against"
-    return await ctx.send("Stance set to **against**")
+    return await ctx.channel.send("Stance set to **against**")
       
+  @only_debate_rooms
+  @cog_ext.cog_slash(
+    name="debate",
+    description="Sets you as a debater for proposition: {}".format(self.debate_room.proposition)
+  )
+  async def _debate(
+    self,
+    ctx: SlashContext
+  ) -> discord.Message:
+    self.debate_room.add_debater(self.debate_room.get_user_by_id(ctx.author.id))
+    return await ctx.channel.send("You are now debating proposition: {}".format(self.debate_room.proposition))
+  
+  @only_debate_rooms
+  @cog_ext.cog_slash(
+    name="vote",
+    description="Allowa you to vote for a member of your choice."
+    options = [
+      {
+        "name": "member",
+        "description": "The member you would like to vote for.",
+        "option_type": 7,
+        "choices" = self.get_debater_choices
+        "required": True
+      }
+    ]
+  )
+  async def _vote(
+    self,
+    ctx: SlashContext,
+    member: discord.Member
+  ) -> discord.Message:
+    self.debate_room.get_user_by_id(member.id).votes += 1
+    return await ctx.channel.send("Set vote for {}".format(member.display_name))
+  
+  @cog_ext.cog_slash(
+    name="conclude",
+    description="Conclude a debate"
+  )
+  async def _conclude(
+    self,
+    ctx: SlashContext
+  ) -> discord.Message:
+    self.concluders.append(ctx.author)
+    if self.concluders / len(self.debate_room.participants) > 0.49:
+      outcome = self.debate_room.end(self.debate_room.winner, self.debate_room.loser)
+      return await ctx.channel.send(
+        embed = discord.Embed(
+          description="Debate concluded with {} votes.".format(len(self.concluders)),
+          color=discord.Colour.green()
+        ).set_author(name="Debate concluded.").add_field(title=self.debate_room.winner.name, value = self.debate_room.winner.final_points).add_field(title=self.debate_room.loser.name, value=self.debate_room.loser.final_points)
+    else:
+        return await ctx.channel.send("Vote cast to conclude.")
+        
+def setup(bot):
+  bot.add_cog(Debates(bot))
