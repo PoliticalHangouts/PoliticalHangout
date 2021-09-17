@@ -11,6 +11,17 @@ from discord_slash import cog_ext, SlashContext
 
 guilds = [Guild(0xcf78b, "loyalty"), Guild(0x8bbff7, "creativity"), Guild(0xf79d8b, "empathy"), Guild(0xd58bf7, "abrasive")]
 
+class Prompt:
+  def __init__(
+    self,
+    pos: str,
+    neg: str,
+    question: str
+  ) -> None:
+    self.pos = pos
+    self.neg = neg
+    self.question=question
+
 class EmbedField:
   def __init__(
     self,
@@ -188,8 +199,9 @@ class Quiz(commands.Cog):
     
     loyalty, creativity, empathy, abrasive = 0, 0, 0, 0
     
-    with open('plugins/guilds/prompts.txt', 'r+') as f:
-      prompts = f.read().split("\n")
+    prompts = [
+      Prompt
+    ]
     
     for prompt in prompts:
       question = create_question(
@@ -204,7 +216,16 @@ class Quiz(commands.Cog):
         values
       )
       
-      prompt.pos, prompt.neg += question.values[0], question.values[1]
+      if prompt.pos == "loyalty": loyality+=response.values[0]
+      if prompt.pos == "creativity": creativity+=response.values[0]
+      if prompt.pos == "empathy": empathy+=response.values[0]
+      if prompt.pos == "abrasive": abrasive+=response.values[0]
+        
+      if prompt.neg == "loyalty": loyality-=response.values[1]
+      if prompt.neg == "creativity": creativity-=response.values[1]
+      if prompt.neg == "empathy": empathy-=response.values[1]
+      if prompt.neg == "abrasive": abrasive-=response.values[1]
+      
       
     guild = get_guild([(loyalty, guilds[0]), (creativity, guilds[1]), (empathy, guilds[2]), (abrasive, guilds[3])])
     
