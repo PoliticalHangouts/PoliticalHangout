@@ -130,7 +130,7 @@ class DebateRoom:
   def proposition(
     self
   ) -> Proposition:
-    
+    return sort(self.props)[0]
     
   def add_proposition(
     self,
