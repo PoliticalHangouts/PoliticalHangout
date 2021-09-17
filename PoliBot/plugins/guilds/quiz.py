@@ -90,7 +90,7 @@ def get_guild(
     if next_guild:
       continue
   
-  return current_guild
+  return current_guild[1]
   
     
 async def create_question(
