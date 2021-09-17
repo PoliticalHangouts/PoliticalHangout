@@ -55,7 +55,7 @@ def sort(
         continue
       else:
         if values[i][0] > previous_value[0]:
-          values[i], values[n] = values[n], values[i]
+          values[n], values[i] = values[i], values[n]
           n = i
           continue
         else:
