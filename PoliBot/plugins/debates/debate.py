@@ -218,6 +218,7 @@ class Debates(commands.Cog):
     self.debate_room.get_user_by_id(member.id).votes += 1
     return await ctx.channel.send("Set vote for {}".format(member.display_name))
   
+  @only_debate_rooms
   @cog_ext.cog_slash(
     name="conclude",
     description="Conclude a debate"
