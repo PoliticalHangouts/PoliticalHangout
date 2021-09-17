@@ -34,7 +34,7 @@ def is_sorted(
     if i == 3:
       break
     
-    if values[i] > values[i+1]:
+    if values[i][0] > values[i+1][0]:
       continue
       
     else:
