@@ -51,7 +51,7 @@ def sort(
         continue
       else:
         if values[i].votes > previous_value.votes:
-          values[i], values[n] = values[n], values[i]
+          values[n], values[i] = values[i], values[n]
           n = i
           continue
         else:
