@@ -108,12 +108,12 @@ async def create_question(
   question_number: int,
   prompt: str,
   options: typing.List[str],
-  fields: typing.List[EmbedField]
+  fields: typing.List[EmbedField],
   time_limit: int,
   bot: commands.Bot,
   ctx: SlashContext,
   guild: Guild,
-  values: typing.Dict[str, Tuple(int)]
+  values: typing.Dict[str, typing.Tuple[int, int]]
 ) -> Response:
   
   embed = discord.Embed(
@@ -139,7 +139,8 @@ async def create_question(
   
   response = await bot.wait_for(
     'reaction_add',
-    check=lambda reaction, user: reaction.message == message and reaction.emoji in options and reaction.user == ctx.author, time_limit
+    time_limit,
+    check=lambda reaction, user: reaction.message == message and reaction.emoji in options and reaction.user == ctx.author
   )
   
   return Response(
@@ -204,8 +205,9 @@ class Quiz(commands.Cog):
     ]
     
     for prompt in prompts:
-      question = create_question(
-        question_number += 1,
+      question_number+=1
+      response = create_question(
+        question_number,
         prompt.question,
         options,
         fields,
@@ -216,12 +218,12 @@ class Quiz(commands.Cog):
         values
       )
       
-      if prompt.pos == "loyalty": loyality+=response.values[0]
+      if prompt.pos == "loyalty": loyalty+=response.values[0]
       if prompt.pos == "creativity": creativity+=response.values[0]
       if prompt.pos == "empathy": empathy+=response.values[0]
       if prompt.pos == "abrasive": abrasive+=response.values[0]
         
-      if prompt.neg == "loyalty": loyality-=response.values[1]
+      if prompt.neg == "loyalty": loyalty-=response.values[1]
       if prompt.neg == "creativity": creativity-=response.values[1]
       if prompt.neg == "empathy": empathy-=response.values[1]
       if prompt.neg == "abrasive": abrasive-=response.values[1]
@@ -230,7 +232,7 @@ class Quiz(commands.Cog):
     guild = get_guild([(loyalty, guilds[0]), (creativity, guilds[1]), (empathy, guilds[2]), (abrasive, guilds[3])])
     
     await ctx.send(
-      file = discord.File('assets/guilds/{}.png'.format(guild.name), filename="{}.png".format(guild.name), spoiler=False)
+      file = discord.File('assets/guilds/{}.png'.format(guild.name), filename="{}.png".format(guild.name), spoiler=False),
       embed=discord.Embed(
         description="You got {}!",
         color=guild.colour
